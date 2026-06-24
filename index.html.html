@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce Experience Cloud — SEO & Domain Setup Guide</title>
+<style>
+  :root {
+    --cloud-blue: #0070D2;
+    --cloud-blue-light: #E8F4FD;
+    --cloud-blue-dark: #004B8D;
+    --teal: #0A7B74;
+    --teal-light: #E0F5F4;
+    --amber: #B7560B;
+    --amber-light: #FFF3E0;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --purple: #5436DA;
+    --purple-light: #EEF0FF;
+    --red: #C0392B;
+    --red-light: #FDEDEC;
+    --gray-50: #F8F9FA;
+    --gray-100: #F1F3F5;
+    --gray-200: #E9ECEF;
+    --gray-300: #DEE2E6;
+    --gray-500: #868E96;
+    --gray-700: #495057;
+    --gray-900: #212529;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+    --radius: 10px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-50);
+    color: var(--gray-900);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #003E7E 0%, #0070D2 60%, #1589EE 100%);
+    color: white;
+    padding: 28px 32px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sf-logo {
+    background: white;
+    color: #0070D2;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .header p {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    background: rgba(255,255,255,0.2);
+    border-radius: 100px;
+    height: 6px;
+    margin-top: 14px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: #7EC8E3;
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 11px;
+    opacity: 0.75;
+    margin-top: 5px;
+    text-align: right;
+  }
+
+  /* ── Phase navigation pills ── */
+  .phase-nav {
+    display: flex;
+    gap: 8px;
+    padding: 14px 32px;
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .phase-nav::-webkit-scrollbar { display: none; }
+  .phase-pill {
+    flex-shrink: 0;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--gray-200);
+    background: white;
+    color: var(--gray-700);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .phase-pill:hover { border-color: var(--cloud-blue); color: var(--cloud-blue); }
+  .phase-pill.active { background: var(--cloud-blue); color: white; border-color: var(--cloud-blue); }
+
+  /* ── Main layout ── */
+  .layout {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 0;
+    min-height: calc(100vh - 160px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    background: white;
+    border-right: 1px solid var(--gray-200);
+    position: sticky;
+    top: 160px;
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .sidebar-phase {
+    margin-bottom: 20px;
+  }
+  .sidebar-phase-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+  .step-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    color: var(--gray-700);
+    font-size: 12.5px;
+  }
+  .step-nav-item:hover { background: var(--gray-100); }
+  .step-nav-item.active { background: var(--cloud-blue-light); color: var(--cloud-blue-dark); font-weight: 600; }
+  .step-nav-item.done { color: var(--green); }
+  .step-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: var(--gray-500);
+    transition: all 0.2s;
+  }
+  .step-nav-item.active .step-dot { border-color: var(--cloud-blue); background: var(--cloud-blue); color: white; }
+  .step-nav-item.done .step-dot { border-color: var(--green); background: var(--green); color: white; }
+
+  /* ── Content area ── */
+  .content {
+    flex: 1;
+    padding: 28px 32px;
+    min-width: 0;
+  }
+
+  /* ── Step card ── */
+  .step-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    display: none;
+  }
+  .step-card.visible { display: block; }
+
+  /* ── Phase header ── */
+  .phase-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 0;
+  }
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+  }
+  .phase-1 .phase-badge { background: var(--cloud-blue-light); color: var(--cloud-blue-dark); }
+  .phase-2 .phase-badge { background: var(--purple-light); color: var(--purple); }
+  .phase-3 .phase-badge { background: var(--teal-light); color: var(--teal); }
+  .phase-header h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .phase-header p { font-size: 13px; color: var(--gray-700); }
+
+  /* ── Step body ── */
+  .step-body { padding: 0; }
+
+  /* ── Individual step ── */
+  .step {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    transition: background 0.15s;
+  }
+  .step:last-child { border-bottom: none; }
+  .step.completed { background: #FAFFFE; }
+  .step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+  .phase-1 .step-number { background: var(--cloud-blue-light); color: var(--cloud-blue-dark); }
+  .phase-2 .step-number { background: var(--purple-light); color: var(--purple); }
+  .phase-3 .step-number { background: var(--teal-light); color: var(--teal); }
+  .step.completed .step-number { background: var(--green); color: white; }
+  .step-title-wrap h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .step-title-wrap .step-location {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-family: var(--font-mono);
+    background: var(--gray-100);
+    padding: 1px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* ── Step content ── */
+  .step-content { padding-left: 46px; }
+  .step-content p { color: var(--gray-700); font-size: 13.5px; margin-bottom: 10px; line-height: 1.65; }
+
+  /* ── Sub-steps (numbered list) ── */
+  .sub-steps { list-style: none; margin: 10px 0; }
+  .sub-steps li {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 13px;
+    color: var(--gray-700);
+    align-items: flex-start;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .sub-steps li:last-child { border-bottom: none; }
+  .sub-num {
+    width: 20px;
+    height: 20px;
+    background: var(--gray-200);
+    color: var(--gray-700);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Code / path snippets ── */
+  .code-block {
+    background: #1E2432;
+    color: #A8D8FF;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin: 10px 0;
+    position: relative;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  .code-block .comment { color: #6A9F6A; }
+  .code-block .key { color: #F5C842; }
+  .code-block .value { color: #A8D8FF; }
+  .code-block .highlight { color: #FF9D6C; }
+  .code-copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #A8D8FF;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: var(--font);
+  }
+  .code-copy:hover { background: rgba(255,255,255,0.2); }
+
+  /* ── Path breadcrumb ── */
+  .sf-path {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+    padding: 8px 12px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .sf-path span { color: var(--gray-700); font-weight: 500; }
+  .sf-path .sep { color: var(--gray-400); font-size: 10px; }
+
+  /* ── Alert boxes ── */
+  .alert {
+    display: flex;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    margin: 10px 0;
+    align-items: flex-start;
+    line-height: 1.55;
+  }
+  .alert-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .alert.warning { background: var(--amber-light); color: var(--amber); border-left: 3px solid var(--amber); }
+  .alert.info { background: var(--cloud-blue-light); color: var(--cloud-blue-dark); border-left: 3px solid var(--cloud-blue); }
+  .alert.success { background: var(--green-light); color: var(--green); border-left: 3px solid var(--green); }
+  .alert.danger { background: var(--red-light); color: var(--red); border-left: 3px solid var(--red); }
+
+  /* ── Table ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin: 10px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+  }
+  .data-table th {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 600;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .data-table td {
+    padding: 9px 12px;
+    border-top: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    vertical-align: top;
+  }
+  .data-table td code {
+    font-family: var(--font-mono);
+    background: var(--gray-100);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .data-table tr:hover td { background: var(--gray-50); }
+
+  /* ── Checklist ── */
+  .checklist { list-style: none; margin: 10px 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--cloud-blue);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .checklist li.checked span { text-decoration: line-through; color: var(--gray-500); }
+
+  /* ── Step complete button ── */
+  .step-footer {
+    padding-left: 46px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-complete {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+  .btn-complete.mark { background: var(--cloud-blue); color: white; }
+  .btn-complete.mark:hover { background: var(--cloud-blue-dark); }
+  .btn-complete.done { background: var(--green-light); color: var(--green); cursor: default; }
+  .done-label { font-size: 12px; color: var(--green); font-weight: 600; display: none; }
+  .done-label.visible { display: flex; align-items: center; gap: 4px; }
+
+  /* ── Navigation ── */
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 8px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .btn-nav {
+    padding: 9px 20px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-300);
+    background: white;
+    color: var(--gray-700);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+  .btn-nav:hover { border-color: var(--cloud-blue); color: var(--cloud-blue); }
+  .btn-nav.primary { background: var(--cloud-blue); color: white; border-color: var(--cloud-blue); }
+  .btn-nav.primary:hover { background: var(--cloud-blue-dark); border-color: var(--cloud-blue-dark); }
+  .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── Summary panel ── */
+  .summary-panel {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-200);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .summary-header {
+    background: linear-gradient(135deg, #003E7E, #0070D2);
+    color: white;
+    padding: 20px 24px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .summary-phase {
+    padding: 16px 20px;
+    border-right: 1px solid var(--gray-200);
+  }
+  .summary-phase:last-child { border-right: none; }
+  .summary-phase h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); margin-bottom: 8px; }
+  .summary-phase ul { list-style: none; }
+  .summary-phase ul li {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--gray-700); padding: 3px 0;
+  }
+  .summary-phase ul li::before { content: '→'; color: var(--cloud-blue); font-size: 10px; }
+
+  /* ── Final checklist card ── */
+  .final-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 24px;
+    border: 2px solid var(--green);
+    margin-bottom: 20px;
+  }
+  .final-card h3 { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <div class="sf-logo">SF</div>
+    <div>
+      <h1>Experience Cloud — SEO &amp; Domain Setup</h1>
+      <p>End-to-end guide: from custom domain to Google indexing</p>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 of 15 steps completed</div>
+</div>
+
+<!-- Phase nav -->
+<div class="phase-nav">
+  <button class="phase-pill active" onclick="goPhase(0)">📋 Overview</button>
+  <button class="phase-pill" onclick="goPhase(1)">🌐 Phase 1 — Domain &amp; DNS</button>
+  <button class="phase-pill" onclick="goPhase(2)">☁️ Phase 2 — Salesforce Config</button>
+  <button class="phase-pill" onclick="goPhase(3)">🔍 Phase 3 — Google Indexing</button>
+  <button class="phase-pill" onclick="goPhase(4)">✅ Go-Live Checklist</button>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div id="sidebarContent"></div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content" id="mainContent"></main>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────
+const phases = [
+  null, // phase 0 = overview (handled separately)
+  {
+    label: 'Phase 1 — Domain & DNS',
+    colorClass: 'phase-1',
+    badge: '🌐 Phase 1 · Domain & DNS',
+    subtitle: 'Register a custom domain and point it to your Salesforce Experience Cloud site.',
+    steps: [
+      {
+        id: 1,
+        title: 'Register your domain',
+        location: 'Domain Registrar (external)',
+        content: `
+          <p>Choose and register your domain from any reputable registrar. Pick something short, brand-aligned, and easy to remember.</p>
+          <p><strong>Popular registrars:</strong></p>
+          <table class="data-table">
+            <thead><tr><th>Registrar</th><th>Notes</th><th>Approx. cost/yr</th></tr></thead>
+            <tbody>
+              <tr><td>GoDaddy</td><td>Easiest DNS UI, widely used</td><td>$12–$20</td></tr>
+              <tr><td>Namecheap</td><td>Clean UI, free WHOIS privacy</td><td>$10–$16</td></tr>
+              <tr><td>AWS Route 53</td><td>Best if already on AWS</td><td>$12 + hosted zone fee</td></tr>
+              <tr><td>Cloudflare Registrar</td><td>At-cost pricing, best for CDN combo</td><td>$8–$12</td></tr>
+            </tbody>
+          </table>
+          <div class="alert info"><span class="alert-icon">💡</span>Cloudflare is recommended: registrar + free CDN + free SSL all in one. This simplifies Step 4 significantly.</div>
+        `
+      },
+      {
+        id: 2,
+        title: 'Note your Salesforce default site URL',
+        location: 'Setup → Digital Experiences → All Sites',
+        content: `
+          <p>Before creating DNS records, you need the URL of your Salesforce site to point your domain to.</p>
+          <div class="sf-path">
+            <span>Setup</span><span class="sep">›</span>
+            <span>Digital Experiences</span><span class="sep">›</span>
+            <span>All Sites</span>
+          </div>
+          <p>Your site will have a URL in one of these formats:</p>
+          <div class="code-block">
+<span class="comment"># New format (Hyperforce / post-2022 orgs)</span>
+<span class="value">yourcompany.my.site.com/sitename</span>
+
+<span class="comment"># Legacy format</span>
+<span class="value">yourcompany.force.com/sitename</span>
+          </div>
+          <div class="alert warning"><span class="alert-icon">⚠️</span>Copy the domain part only (e.g., <code>yourcompany.my.site.com</code>) — this is what you'll use in your CNAME record in the next step.</div>
+        `
+      },
+      {
+        id: 3,
+        title: 'Create a CNAME record in your DNS',
+        location: 'DNS Registrar → DNS Management',
+        content: `
+          <p>Log in to your domain registrar and navigate to DNS settings. Create the following record to point your domain to Salesforce.</p>
+          <table class="data-table">
+            <thead><tr><th>Field</th><th>Value</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Type</td><td><code>CNAME</code></td><td>Not A record</td></tr>
+              <tr><td>Host / Name</td><td><code>www</code></td><td>For www.makemycoffee.com</td></tr>
+              <tr><td>Value / Points to</td><td><code>yourcompany.my.site.com</code></td><td>Your SF site URL from Step 2</td></tr>
+              <tr><td>TTL</td><td><code>3600</code></td><td>1 hour (or Auto)</td></tr>
+            </tbody>
+          </table>
+          <div class="alert warning"><span class="alert-icon">⚠️</span><strong>Root domain note:</strong> CNAME records cannot be placed on root/apex domains (makemycoffee.com without www). Use an ALIAS or ANAME record if your registrar supports it, or set up a redirect from root → www.</div>
+          <div class="alert info"><span class="alert-icon">⏱️</span>DNS propagation can take <strong>up to 48 hours</strong>. Verify propagation at <code>whatsmydns.net</code> before proceeding to Step 5.</div>
+        `
+      },
+      {
+        id: 4,
+        title: 'Provision SSL / HTTPS',
+        location: 'Registrar / CDN or Salesforce (Step 5)',
+        content: `
+          <p>Google requires HTTPS for indexing. You have two options — pick one based on your setup.</p>
+          <table class="data-table">
+            <thead><tr><th>Option</th><th>How</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Option A — Salesforce SSL</strong></td><td>Salesforce auto-provisions via Let's Encrypt when you add a Custom URL (Step 5)</td><td>Simple setups, no CDN needed</td></tr>
+              <tr><td><strong>Option B — Cloudflare (recommended)</strong></td><td>Point nameservers to Cloudflare; free Universal SSL, caching, and CDN included</td><td>Better performance + easy SSL</td></tr>
+            </tbody>
+          </table>
+          <p>If using <strong>Cloudflare</strong>: add your site to Cloudflare, update your domain's nameservers at the registrar to Cloudflare's, then set SSL/TLS mode to <strong>Full (Strict)</strong> in Cloudflare → SSL/TLS → Overview.</p>
+          <div class="alert success"><span class="alert-icon">✅</span>HTTPS is a confirmed Google ranking signal. Always use it.</div>
+        `
+      }
+    ]
+  },
+  {
+    label: 'Phase 2 — Salesforce Config',
+    colorClass: 'phase-2',
+    badge: '☁️ Phase 2 · Salesforce Config',
+    subtitle: 'Configure your Experience Cloud site in Salesforce for custom domain, public access, and SEO.',
+    steps: [
+      {
+        id: 5,
+        title: 'Add custom domain in Salesforce',
+        location: 'Setup → Custom URLs → New',
+        content: `
+          <p>This links your registered domain to your Salesforce Experience Cloud site and triggers Salesforce to provision an SSL certificate automatically.</p>
+          <div class="sf-path">
+            <span>Setup</span><span class="sep">›</span>
+            <span>Custom URLs</span><span class="sep">›</span>
+            <span>New</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>In the <strong>Custom URL</strong> field, enter your domain: <code>www.makemycoffee.com</code></li>
+            <li><span class="sub-num">2</span>Under <strong>Site</strong>, select your Experience Cloud site from the dropdown</li>
+            <li><span class="sub-num">3</span>Leave <strong>Redirect</strong> checked if you want the Salesforce default URL to redirect to your custom domain</li>
+            <li><span class="sub-num">4</span>Click <strong>Save</strong></li>
+            <li><span class="sub-num">5</span>Salesforce will provision a Let's Encrypt cert. This takes 10–30 minutes.</li>
+          </ul>
+          <div class="alert info"><span class="alert-icon">💡</span>If Cloudflare handles SSL, you may see a cert conflict. Set Cloudflare SSL mode to <strong>Full</strong> (not Full Strict) if cert errors appear, then revisit once Salesforce completes provisioning.</div>
+        `
+      },
+      {
+        id: 6,
+        title: 'Enable public / guest user access',
+        location: 'Experience Builder → Administration → General',
+        content: `
+          <p>Google cannot crawl pages that require a login. Your site must be accessible to unauthenticated users (the "Guest" user in Salesforce terms).</p>
+          <div class="sf-path">
+            <span>Experience Builder</span><span class="sep">›</span>
+            <span>Administration</span><span class="sep">›</span>
+            <span>General</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>Scroll to <strong>Guest user access</strong> and ensure <em>"Allow guests to access public API requests without logging in"</em> is enabled</li>
+            <li><span class="sub-num">2</span>Ensure site status is <strong>Active</strong> (not Preview)</li>
+          </ul>
+          <div class="sf-path">
+            <span>Setup</span><span class="sep">›</span>
+            <span>Profiles</span><span class="sep">›</span>
+            <span>[SiteName] Guest User Profile</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">3</span>Open the Guest User profile for your site</li>
+            <li><span class="sub-num">4</span>Under <strong>Object Permissions</strong>, grant <em>Read</em> access to all objects whose data appears on public pages</li>
+            <li><span class="sub-num">5</span>Under <strong>Field-Level Security</strong>, grant <em>Read</em> access to all fields displayed on public pages</li>
+          </ul>
+          <div class="alert danger"><span class="alert-icon">🔒</span><strong>Security caution:</strong> Only expose fields/objects that are genuinely public. Never grant Write access to Guest profiles.</div>
+        `
+      },
+      {
+        id: 7,
+        title: 'Enable SEO settings in Experience Builder',
+        location: 'Experience Builder → Settings → SEO',
+        content: `
+          <p>This is the core Salesforce SEO toggle — without it, your pages will have <code>noindex</code> in the meta tags and Google won't index them.</p>
+          <div class="sf-path">
+            <span>Experience Builder</span><span class="sep">›</span>
+            <span>Settings (gear icon)</span><span class="sep">›</span>
+            <span>SEO</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>Toggle ON: <strong>"Allow search engines to index your site"</strong></li>
+            <li><span class="sub-num">2</span>Toggle ON: <strong>"Enable meta tags"</strong> — this unlocks per-page SEO fields</li>
+            <li><span class="sub-num">3</span>Set <strong>canonical URL</strong> to your custom domain (<code>https://www.makemycoffee.com</code>), not the default Salesforce URL</li>
+          </ul>
+          <div class="alert warning"><span class="alert-icon">⚠️</span>If the canonical is left as the Salesforce default URL, Google may index that instead of your custom domain, causing a duplicate content issue.</div>
+        `
+      },
+      {
+        id: 8,
+        title: 'Configure robots.txt',
+        location: 'yoursite.com/robots.txt',
+        content: `
+          <p>Salesforce auto-generates a <code>robots.txt</code> file. Verify it isn't blocking crawlers before go-live.</p>
+          <p>Visit <code>https://www.makemycoffee.com/robots.txt</code> in a browser after DNS propagates. The default Salesforce output looks like:</p>
+          <div class="code-block">
+<span class="key">User-agent:</span> <span class="value">*</span>
+<span class="key">Disallow:</span> <span class="value">/secur/</span>
+<span class="key">Disallow:</span> <span class="value">/setup/</span>
+<span class="key">Allow:</span> <span class="value">/</span>
+
+<span class="key">Sitemap:</span> <span class="value">https://www.makemycoffee.com/sitemap.xml</span>
+          </div>
+          <p>To customise: create a static resource named <code>robots</code> (text/plain) in Salesforce and it will override the default.</p>
+          <div class="alert info"><span class="alert-icon">💡</span>If you have pages you want to keep out of Google (e.g., login pages, thank-you pages), add <code>Disallow: /path/</code> lines here.</div>
+        `
+      },
+      {
+        id: 9,
+        title: 'Set page meta tags (title & description)',
+        location: 'Experience Builder → Page → Page Properties',
+        content: `
+          <p>Each page needs a unique title and description. These appear in Google search results and directly impact click-through rate.</p>
+          <div class="sf-path">
+            <span>Experience Builder</span><span class="sep">›</span>
+            <span>Select a page</span><span class="sep">›</span>
+            <span>Page Properties (gear icon)</span><span class="sep">›</span>
+            <span>SEO tab</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>Set <strong>Page Title</strong> — keep under 60 characters. Include your brand name and primary keyword.</li>
+            <li><span class="sub-num">2</span>Set <strong>Meta Description</strong> — keep under 155 characters. Write a compelling sentence that describes what the page offers.</li>
+            <li><span class="sub-num">3</span>Repeat for <strong>every public page</strong> on the site — home, product, contact, articles, etc.</li>
+          </ul>
+          <table class="data-table">
+            <thead><tr><th>Field</th><th>Recommended length</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>Page Title</td><td>50–60 chars</td><td>Order Coffee Online | Make My Coffee</td></tr>
+              <tr><td>Meta Description</td><td>120–155 chars</td><td>Fresh-roasted coffee delivered to your door. Browse 50+ blends and order in minutes.</td></tr>
+            </tbody>
+          </table>
+          <div class="alert info"><span class="alert-icon">💡</span>For Knowledge Article or CMS-driven pages, use <strong>dynamic SEO binding</strong>: map the Title to a field like <code>{!article.Title}</code> so meta tags update automatically per record.</div>
+        `
+      },
+      {
+        id: 10,
+        title: 'Generate and verify sitemap.xml',
+        location: 'yoursite.com/sitemap.xml',
+        content: `
+          <p>Salesforce auto-generates a sitemap listing all public pages. Verify it is correct before submitting to Google.</p>
+          <p>Visit: <code>https://www.makemycoffee.com/sitemap.xml</code></p>
+          <p>It should look like this:</p>
+          <div class="code-block">
+<span class="comment">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="highlight">&lt;urlset&gt;</span>
+  <span class="key">&lt;url&gt;</span>
+    <span class="value">&lt;loc&gt;https://www.makemycoffee.com/&lt;/loc&gt;</span>
+    <span class="comment">&lt;lastmod&gt;2025-06-01&lt;/lastmod&gt;</span>
+  <span class="key">&lt;/url&gt;</span>
+  <span class="key">&lt;url&gt;</span>
+    <span class="value">&lt;loc&gt;https://www.makemycoffee.com/products&lt;/loc&gt;</span>
+  <span class="key">&lt;/url&gt;</span>
+  <span class="comment">... more URLs ...</span>
+<span class="highlight">&lt;/urlset&gt;</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>Confirm all key public pages appear in the sitemap</li>
+            <li><span class="sub-num">2</span>Confirm URLs use your custom domain, not the Salesforce default URL</li>
+            <li><span class="sub-num">3</span>If pages are missing: check they are set to <strong>Public</strong> visibility in Experience Builder</li>
+          </ul>
+        `
+      },
+      {
+        id: 11,
+        title: 'Enable CDN for page speed',
+        location: 'Experience Builder → Administration → CDN',
+        content: `
+          <p>Page speed is a confirmed Google ranking factor. Salesforce offers a built-in CDN option for Experience Cloud.</p>
+          <div class="sf-path">
+            <span>Experience Builder</span><span class="sep">›</span>
+            <span>Administration</span><span class="sep">›</span>
+            <span>CDN</span>
+          </div>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>Enable <strong>Salesforce Content Delivery Network (CDN)</strong> if available in your org edition</li>
+            <li><span class="sub-num">2</span>Alternatively, if using Cloudflare: enable <strong>Caching</strong> on static assets in Cloudflare → Caching → Configuration</li>
+            <li><span class="sub-num">3</span>Test page load speed at <code>pagespeed.web.dev</code> — aim for a score above 70 on mobile</li>
+          </ul>
+          <div class="alert info"><span class="alert-icon">📊</span>Core Web Vitals (LCP, FID, CLS) now directly influence Google rankings. Prioritise image optimisation and minimise custom JavaScript on pages.</div>
+        `
+      }
+    ]
+  },
+  {
+    label: 'Phase 3 — Google Indexing',
+    colorClass: 'phase-3',
+    badge: '🔍 Phase 3 · Google Indexing',
+    subtitle: 'Register your site with Google Search Console, submit your sitemap, and monitor crawling.',
+    steps: [
+      {
+        id: 12,
+        title: 'Add property in Google Search Console',
+        location: 'search.google.com/search-console',
+        content: `
+          <p>Google Search Console (GSC) is the free tool Google provides to monitor your site's presence in search results.</p>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>Go to <a href="https://search.google.com/search-console" target="_blank" style="color:var(--cloud-blue)">search.google.com/search-console</a></li>
+            <li><span class="sub-num">2</span>Click <strong>Add Property</strong></li>
+            <li><span class="sub-num">3</span>Choose <strong>URL prefix</strong> type and enter: <code>https://www.makemycoffee.com</code></li>
+            <li><span class="sub-num">4</span>Click Continue</li>
+          </ul>
+          <div class="alert info"><span class="alert-icon">💡</span>Use <strong>URL prefix</strong> (not Domain property) unless you control DNS at the root — it's easier to verify for Salesforce sites.</div>
+        `
+      },
+      {
+        id: 13,
+        title: 'Verify site ownership',
+        location: 'GSC → Verification → HTML Tag method',
+        content: `
+          <p>Google needs to confirm you own the site. The easiest method for Salesforce Experience Cloud is the HTML meta tag.</p>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>In GSC, select <strong>"HTML tag"</strong> verification method</li>
+            <li><span class="sub-num">2</span>Copy the meta tag — it looks like: <code>&lt;meta name="google-site-verification" content="abc123xyz"/&gt;</code></li>
+            <li><span class="sub-num">3</span>In Experience Builder → <strong>Settings → Advanced → Edit Head Markup</strong></li>
+            <li><span class="sub-num">4</span>Paste the meta tag and click <strong>Save</strong></li>
+            <li><span class="sub-num">5</span>Back in GSC, click <strong>Verify</strong></li>
+          </ul>
+          <div class="sf-path">
+            <span>Experience Builder</span><span class="sep">›</span>
+            <span>Settings</span><span class="sep">›</span>
+            <span>Advanced</span><span class="sep">›</span>
+            <span>Edit Head Markup</span>
+          </div>
+          <div class="alert success"><span class="alert-icon">✅</span>Once verified, GSC will start collecting data about your site's impressions, clicks, and crawl errors within a few days.</div>
+        `
+      },
+      {
+        id: 14,
+        title: 'Submit sitemap to Google',
+        location: 'GSC → Sitemaps',
+        content: `
+          <p>Submitting your sitemap tells Google exactly which pages exist on your site and speeds up initial indexing.</p>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>In Google Search Console, click <strong>Sitemaps</strong> in the left nav</li>
+            <li><span class="sub-num">2</span>In the "Add a new sitemap" box, enter: <code>sitemap.xml</code></li>
+            <li><span class="sub-num">3</span>Click <strong>Submit</strong></li>
+            <li><span class="sub-num">4</span>Wait 24–72 hours — the Status will change from "Pending" to "Success"</li>
+            <li><span class="sub-num">5</span>The "Discovered URLs" count will show how many pages Google found</li>
+          </ul>
+          <div class="alert info"><span class="alert-icon">⏱️</span>Full indexing of a new site can take <strong>1–4 weeks</strong>. Domain age and number of external links affect how quickly Google crawls your content.</div>
+        `
+      },
+      {
+        id: 15,
+        title: 'Request indexing for priority pages',
+        location: 'GSC → URL Inspection Tool',
+        content: `
+          <p>Don't wait for Google to discover your most important pages naturally. Use the URL Inspection tool to request immediate crawling.</p>
+          <ul class="sub-steps">
+            <li><span class="sub-num">1</span>In GSC, click <strong>URL Inspection</strong> in the left nav</li>
+            <li><span class="sub-num">2</span>Paste your homepage URL: <code>https://www.makemycoffee.com</code></li>
+            <li><span class="sub-num">3</span>Click <strong>Request Indexing</strong></li>
+            <li><span class="sub-num">4</span>Repeat for 5–10 of your most important pages (product pages, key landing pages)</li>
+          </ul>
+          <div class="alert warning"><span class="alert-icon">⚠️</span>Google limits manual indexing requests to ~10 per day per property. Use them wisely on your highest-value pages.</div>
+          <p>After 1–2 weeks, return to GSC → <strong>Coverage</strong> report to check which pages are indexed and investigate any errors (e.g., pages marked "Excluded" or "Crawled - not indexed").</p>
+        `
+      }
+    ]
+  }
+];
+
+// ── State ──────────────────────────────────────────────────────────────────
+let currentPhase = 0;
+const completedSteps = new Set();
+const TOTAL_STEPS = 15;
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function renderOverview() {
+  const main = document.getElementById('mainContent');
+  const sidebar = document.getElementById('sidebarContent');
+  sidebar.innerHTML = `<div style="padding:8px;color:var(--gray-500);font-size:12px">Select a phase to begin</div>`;
+  main.innerHTML = `
+    <div class="summary-panel">
+      <div class="summary-header">📋 Setup Overview — What we'll configure</div>
+      <div class="summary-grid">
+        <div class="summary-phase">
+          <h4>🌐 Phase 1 · Domain</h4>
+          <ul>
+            <li>Register your domain</li>
+            <li>Find SF site URL</li>
+            <li>Add CNAME DNS record</li>
+            <li>Provision SSL / HTTPS</li>
+          </ul>
+        </div>
+        <div class="summary-phase">
+          <h4>☁️ Phase 2 · Salesforce</h4>
+          <ul>
+            <li>Add custom domain in SF</li>
+            <li>Enable guest user access</li>
+            <li>Turn on SEO settings</li>
+            <li>Configure robots.txt</li>
+            <li>Set page meta tags</li>
+            <li>Verify sitemap.xml</li>
+            <li>Enable CDN</li>
+          </ul>
+        </div>
+        <div class="summary-phase">
+          <h4>🔍 Phase 3 · Google</h4>
+          <ul>
+            <li>Add GSC property</li>
+            <li>Verify site ownership</li>
+            <li>Submit sitemap</li>
+            <li>Request indexing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:24px;box-shadow:var(--shadow);">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--gray-900)">Before you start — prerequisites</h3>
+      <ul class="checklist">
+        <li><input type="checkbox" class="check-input"> <span>You have System Administrator access to your Salesforce org</span></li>
+        <li><input type="checkbox" class="check-input"> <span>Your Experience Cloud site is built and ready (in Preview or Active status)</span></li>
+        <li><input type="checkbox" class="check-input"> <span>You have access to the domain registrar account (or have purchased a domain)</span></li>
+        <li><input type="checkbox" class="check-input"> <span>You have a Google account for Search Console</span></li>
+        <li><input type="checkbox" class="check-input"> <span>Site content (pages, articles) are finalised and ready for indexing</span></li>
+      </ul>
+      <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-nav primary" onclick="goPhase(1)">Start with Phase 1 →</button>
+        <button class="btn-nav" onclick="goPhase(4)">Jump to Go-Live Checklist</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPhase(phaseIndex) {
+  const phase = phases[phaseIndex];
+  const main = document.getElementById('mainContent');
+  const sidebar = document.getElementById('sidebarContent');
+
+  // Sidebar
+  sidebar.innerHTML = `
+    <div class="sidebar-phase">
+      <div class="sidebar-phase-label">${phase.label}</div>
+      ${phase.steps.map(step => `
+        <div class="step-nav-item ${completedSteps.has(step.id) ? 'done' : ''}" id="nav-${step.id}" onclick="scrollToStep(${step.id})">
+          <div class="step-dot">${completedSteps.has(step.id) ? '✓' : step.id}</div>
+          <span>${step.title}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Main content
+  main.innerHTML = `
+    <div class="step-card visible ${phase.colorClass}" id="phase-card-${phaseIndex}">
+      <div class="phase-header">
+        <div class="phase-badge">${phase.badge}</div>
+        <h2>${phase.label}</h2>
+        <p>${phase.subtitle}</p>
+      </div>
+      <div class="step-body">
+        ${phase.steps.map(step => renderStep(step, phase.colorClass)).join('')}
+      </div>
+    </div>
+    <div class="nav-footer">
+      <button class="btn-nav" onclick="goPhase(${phaseIndex - 1})" ${phaseIndex <= 1 ? 'disabled' : ''}>← Previous phase</button>
+      <span style="font-size:12px;color:var(--gray-500)">${phase.steps.filter(s => completedSteps.has(s.id)).length} of ${phase.steps.length} steps done</span>
+      <button class="btn-nav primary" onclick="goPhase(${phaseIndex + 1})" ${phaseIndex >= 3 ? 'disabled' : ''}>${phaseIndex >= 3 ? 'All phases done' : 'Next phase →'}</button>
+    </div>
+  `;
+}
+
+function renderStep(step, colorClass) {
+  const done = completedSteps.has(step.id);
+  return `
+    <div class="step ${done ? 'completed' : ''}" id="step-${step.id}">
+      <div class="step-header">
+        <div class="step-number ${colorClass}">${done ? '✓' : step.id}</div>
+        <div class="step-title-wrap">
+          <h3>${step.title}</h3>
+          <span class="step-location">${step.location}</span>
+        </div>
+      </div>
+      <div class="step-content">
+        ${step.content}
+      </div>
+      <div class="step-footer">
+        <button class="btn-complete ${done ? 'done' : 'mark'}" onclick="toggleStep(${step.id})" id="btn-${step.id}">
+          ${done ? '✓ Completed' : 'Mark as done'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderChecklist() {
+  const main = document.getElementById('mainContent');
+  const sidebar = document.getElementById('sidebarContent');
+  sidebar.innerHTML = `<div style="padding:8px;color:var(--gray-500);font-size:12px">Final checks before go-live</div>`;
+  main.innerHTML = `
+    <div class="final-card">
+      <h3>✅ Go-Live Checklist</h3>
+      <p style="font-size:13px;color:var(--gray-700);margin-bottom:16px">Run through every item below before announcing your site publicly.</p>
+      <ul class="checklist" id="goLiveChecklist">
+        ${[
+          ['DNS', 'CNAME record created and propagated (verify at whatsmydns.net)'],
+          ['SSL', 'https:// loads without cert errors on your custom domain'],
+          ['SF Domain', 'Custom URL added in Setup → Custom URLs and status is Active'],
+          ['Guest Access', 'Site is publicly accessible without login'],
+          ['SEO Toggle', '"Allow search engines to index your site" is ON in Experience Builder'],
+          ['Canonical URL', 'Canonical set to your custom domain, not the Salesforce default URL'],
+          ['robots.txt', 'No Disallow rules blocking important pages — check /robots.txt'],
+          ['sitemap.xml', 'All key pages appear in /sitemap.xml with your custom domain URLs'],
+          ['Meta Tags', 'Every public page has a unique title (≤60 chars) and meta description (≤155 chars)'],
+          ['No Noindex', 'No <meta name="robots" content="noindex"> tags on pages you want indexed'],
+          ['Page Speed', 'PageSpeed score above 70 on mobile (test at pagespeed.web.dev)'],
+          ['GSC Property', 'Google Search Console property added and verified'],
+          ['Sitemap Submitted', 'sitemap.xml submitted in GSC → Sitemaps section'],
+          ['Priority Pages', 'Key pages requested for indexing via GSC URL Inspection tool'],
+          ['Site Status', 'Experience Cloud site is set to Active (not Preview)'],
+        ].map(([tag, text]) => `
+          <li id="cli-${text.slice(0,10)}" onclick="toggleChecklistItem(this)">
+            <input type="checkbox" class="check-input" onclick="event.stopPropagation()">
+            <span><strong style="color:var(--cloud-blue);font-size:11px;margin-right:6px">[${tag}]</strong>${text}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+    <div style="background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:20px;box-shadow:var(--shadow);">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:10px">⏱️ What to expect after go-live</h3>
+      <table class="data-table">
+        <thead><tr><th>Timeframe</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td>0–48 hrs</td><td>DNS propagates globally. SSL cert activates.</td></tr>
+          <tr><td>1–3 days</td><td>Google visits your site for the first time after sitemap submission.</td></tr>
+          <tr><td>1–2 weeks</td><td>First pages start appearing in Google search results.</td></tr>
+          <tr><td>3–6 weeks</td><td>Full site indexed. GSC Coverage report shows full picture.</td></tr>
+          <tr><td>3+ months</td><td>Rankings stabilise. Domain authority builds with inbound links.</td></tr>
+        </tbody>
+      </table>
+      <div class="alert success" style="margin-top:14px"><span class="alert-icon">🚀</span>Once indexed, monitor GSC weekly. Fix any Coverage errors, watch for crawl anomalies, and keep meta tags updated as content changes.</div>
+    </div>
+    <div class="nav-footer">
+      <button class="btn-nav" onclick="goPhase(3)">← Back to Phase 3</button>
+      <span style="font-size:12px;color:var(--gray-500)" id="overallProgress">${completedSteps.size} of ${TOTAL_STEPS} steps completed</span>
+      <span></span>
+    </div>
+  `;
+}
+
+// ── Interaction ────────────────────────────────────────────────────────────
+function goPhase(index) {
+  currentPhase = index;
+  document.querySelectorAll('.phase-pill').forEach((p, i) => p.classList.toggle('active', i === index));
+  if (index === 0) renderOverview();
+  else if (index === 4) renderChecklist();
+  else renderPhase(index);
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleStep(stepId) {
+  if (completedSteps.has(stepId)) {
+    completedSteps.delete(stepId);
+  } else {
+    completedSteps.add(stepId);
+  }
+  // Re-render current phase to reflect state
+  renderPhase(currentPhase);
+  updateProgress();
+}
+
+function scrollToStep(stepId) {
+  const el = document.getElementById('step-' + stepId);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleChecklistItem(li) {
+  const cb = li.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  li.classList.toggle('checked', cb.checked);
+}
+
+function updateProgress() {
+  const pct = Math.round((completedSteps.size / TOTAL_STEPS) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${completedSteps.size} of ${TOTAL_STEPS} steps completed`;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+renderOverview();
+updateProgress();
+</script>
+</body>
+</html>
